@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Open+Sans:wght@300..800&family=Outfit:wght@100..900&family=Ubuntu+Sans:ital@0;1&display=swap');
+
+
+@import "tailwindcss";
+
+
+*{
+    font-family: "Outfit", "sans-serif";
+}
+
+@theme {
+    --color-primary: #2563EB;
+    --color-primary-dull: #1F58D8;
+    --color-light: #F1F5F9;
+    --color-borderColor: #C4C7D2;
+}
