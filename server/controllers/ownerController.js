@@ -92,7 +92,7 @@ export const toggleCarAvailability = async(req,res) => {
             return res.json({success: false, message: "Unauthorized"});
         }
 
-        car.isAvaliable = !car.isAvaliable;
+        car.isAvailable = !car.isAvailable;
         await car.save()
 
 
@@ -114,15 +114,13 @@ export const deleteCar = async(req,res) => {
         const {carId} = req.body;
         const car = await Car.findById(carId)
 
+
         // checking is car belongs to the user
         if(car.owner.toString() !== _id.toString()){
             return res.json({success: false, message: "Unauthorized"});
         }
-
-        car.owner = null;
-        car.isAvaliable = false;
-        await car.save()
-
+        
+        await Car.findByIdAndDelete(carId);
 
         res.json({success: true, message: "Car Removed"})
 
@@ -207,3 +205,56 @@ export const updateUserImage = async (req,res) =>{
         res.json({success: false, message: error.message})    
     }
 }
+
+// Get single car
+export const getCarById = async (req, res) => {
+  try {
+    const car = await Car.findById(req.params.id);
+    if (!car) return res.json({ success: false, message: "Car not found" });
+    res.json({ success: true, car });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// Update car
+export const updateCar = async (req, res) => {
+  try {
+    const { carData } = req.body;
+    const carDetails = JSON.parse(carData);
+    const car = await Car.findById(req.params.id);
+
+    if (!car) return res.json({ success: false, message: "Car not found" });
+
+    // ✅ Update car fields
+    Object.assign(car, carDetails);
+
+    // ✅ If new image uploaded, upload to ImageKit
+    if (req.file) {
+      const fileBuffer = fs.readFileSync(req.file.path);
+      const response = await imagekit.upload({
+        file: fileBuffer,
+        fileName: req.file.originalname,
+        folder: '/cars'
+      });
+
+      // Optimize uploaded image
+      const optimizedImageUrl = imagekit.url({
+        path: response.filePath,
+        transformation: [
+          { width: '1280' },
+          { quality: 'auto' },
+          { format: 'webp' },
+        ],
+      });
+
+      car.image = optimizedImageUrl;
+    }
+
+    await car.save();
+    res.json({ success: true, message: "Car updated successfully" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+

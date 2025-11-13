@@ -40,8 +40,10 @@ import car_image1 from "./car_image1.png"
 import car_image2 from "./car_image2.png"
 import car_image3 from "./car_image3.png"
 import car_image4 from "./car_image4.png"
+import newun from "./newun.jpg"
+import { AppContext } from "../context/AppContext";
 
-export const cityList = ['New York', 'Los Angeles', 'Houston', 'Chicago']
+export const cityList = ['Jaipur','Delhi', 'Chandigarh', 'Hanumangarh','SriGanganagar']
 
 export const assets = {
     logo,
@@ -85,14 +87,17 @@ export const assets = {
     user_profile,
     car_image2,
     car_image3,
-    car_image4
+    car_image4,
+    newun
 }
 
 export const menuLinks = [
-    { name: "Home", path: "/" },
-    { name: "Cars", path: "/cars" },
-    { name: "My Bookings", path: "/my-bookings" },
-]
+  { name: "Home", path: "/" },
+  { name: "Cars", path: "/cars" },
+  { name: "My Bookings", path: "/my-bookings" },
+  { name: "About Us", path: "/"}
+];
+
 
 export const ownerMenuLinks = [
     { name: "Dashboard", path: "/owner", icon: dashboardIcon, coloredIcon: dashboardIconColored },

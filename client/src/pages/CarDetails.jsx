@@ -10,28 +10,123 @@ export default function CarDetails() {
 
     const { id } = useParams();
 
-    const { cars, axios, pickupDate, setPickupDate, returnDate, setReturnDate } = useAppContext()
+    const { cars, axios, pickupDate, setPickupDate, returnDate, setReturnDate, user } = useAppContext();
+    
     const navigate = useNavigate();
     const [car, setCar] = useState(null);
+
+
+    // inside CarDetails component
+    const loadRazorpay = (src = 'https://checkout.razorpay.com/v1/checkout.js') => {
+        return new Promise((resolve) => {
+            if (window.Razorpay) return resolve(true);
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
+    // helper: compute days between dates inclusive/exclusive as you want
+    const getDaysDifference = (start, end) => {
+        const msPerDay = 1000 * 60 * 60 * 24;
+        const s = new Date(start);
+        const e = new Date(end);
+        const diff = Math.ceil((e - s) / msPerDay); // number of nights/days
+        return diff > 0 ? diff : 0;
+    };
+
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const { data } = await axios.post('/api/bookings/create', {
-                car: id,
-                pickupDate,
-                returnDate
-            })
-            if (data.success) {
-                toast.success(data.message)
-                navigate('/my-bookings')
-            } else {
-                toast.error(data.message)
-            }
-        } catch (error) {
-            toast.error(error.message)
+        if (!pickupDate || !returnDate) {
+            toast.error('Please select pickup and return dates');
+            return;
+        }
+        const days = getDaysDifference(pickupDate, returnDate);
+        if (days <= 0) {
+            toast.error('Return date must be after pickup date');
+            return;
         }
 
-    }
+        // total amount calculation (example: pricePerDay * days)
+        const amount = car.pricePerDay * days;
+
+        try {
+            const ok = await loadRazorpay();
+            if (!ok) {
+                toast.error('Failed to load payment SDK. Try again.');
+                return;
+            }
+
+            // create order on backend
+            const { data } = await axios.post('/api/payment/create-order', { amount });
+            if (!data.success) {
+                toast.error('Could not initialize payment');
+                return;
+            }
+
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+                order_id: data.order.id,
+                amount: data.order.amount,
+                currency: data.order.currency,
+                name: 'CarRental App',
+                description: `${car.brand} ${car.model} - Booking`,
+                image: car.image,
+                handler: async function (response) {
+                    // response => { razorpay_payment_id, razorpay_order_id, razorpay_signature }
+                    try {
+                        // send verification + booking details to backend
+                        const bookingData = {
+                            car: id,
+                            pickupDate,
+                            returnDate,
+                            price: amount,
+                        };
+                        const verifyRes = await axios.post('/api/payment/verify-payment', {
+                            ...response,
+                            bookingData,
+                        });
+
+                        if (verifyRes.data.success) {
+                            toast.success('Payment successful and booking confirmed');
+                            navigate('/my-bookings');
+                        } else {
+                            toast.error(verifyRes.data.message || 'Payment verification failed');
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        toast.error('Payment verification error');
+                    }
+                },
+                prefill: {
+                    name: user?.name || '',
+                    email: user?.email || '',
+                },
+                theme: {
+                    color: '#0d6efd',
+                },
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.on('payment.failed', function (response) {
+                // optional: handle failure
+                toast.error('Payment failed. Please try again.');
+                console.error(response.error);
+            });
+
+            rzp.open();
+        } catch (error) {
+            console.error(error);
+            toast.error('Payment error: ' + error.message);
+        }
+    };
+
+
+
     const currency = import.meta.env.VITE_CURRENCY;
     useEffect(() => {
         setCar(cars.find(car => car._id === id))

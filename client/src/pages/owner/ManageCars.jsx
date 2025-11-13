@@ -6,7 +6,7 @@ import {toast} from "react-hot-toast";
 
 export default function ManageCars(){
 
-    const {axios, currency, isOwner} = useAppContext();
+    const {axios, currency, isOwner, navigate} = useAppContext();
 
     const [cars, setCars] = useState([]);
 
@@ -71,7 +71,7 @@ export default function ManageCars(){
                             <th className="p-3 font-medium max-md:hidden">Category</th>
                             <th className="p-3 font-medium">Price</th>
                             <th className="p-3 font-medium max-md:hidden">Status</th>
-                            <th className="p-3 font-medium">Action</th>
+                            <th className="p-3 font-medium block ml-10">Action</th>
                         </tr>
                     </thead>
 
@@ -90,14 +90,15 @@ export default function ManageCars(){
                                 <td className="px-3 max-md:hidden">{currency}{car.pricePerDay}/day</td>
 
                                 <td className="px-3 max-md:hidden">
-                                    <span className={`px-3 py-1 rounded-full text-xs ${car.isAvaliable ? "bg-green-100 text-green-500": "bg-red-100 text-red-500"}`}>
-                                        {car.isAvaliable ? "Avaliable" : "Unavaliable"}
+                                    <span className={`px-3 py-1 rounded-full text-xs ${car.isAvailable ? "bg-green-100 text-green-500": "bg-red-100 text-red-500"}`}>
+                                        {car.isAvailable ? "Avaliable" : "Unavaliable"}
                                     </span>
                                 </td>
 
-                                <td className="flex items-center p-3">
-                                    <img onClick={() => toggleAvailablity(car._id)} src={car.isAvaliable? assets.eye_close_icon : assets.eye_icon} alt="icon" className="cursor-pointer" />
+                                <td className="flex items-center justify-center p-3">
+                                    <img onClick={() => toggleAvailablity(car._id)} src={car.isAvailable? assets.eye_close_icon : assets.eye_icon} alt="icon" className="cursor-pointer" />
                                     <img onClick={() => deleteCar(car._id)} src={assets.delete_icon} alt="icon" className="cursor-pointer" />
+                                    <img onClick={() => navigate(`/owner/edit-car/${car._id}`)} src={assets.edit_icon} alt="icon" className="cursor-pointer w-5" />
                                 </td>
 
                             </tr>

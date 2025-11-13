@@ -65,7 +65,7 @@ export default function ManageBookings() {
                                 <td className="p-3">{currency}{booking.price}</td>
 
                                 <td className="p-3 max-md:hidden">
-                                    <span className="bg-gray-100 px-3 py-1 rounded-full text-xs">Offline</span>
+                                    <span className="bg-gray-100 px-3 py-1 rounded-full text-xm text-green-500">Online</span>
                                 </td>
 
                                 <td className="p-3">

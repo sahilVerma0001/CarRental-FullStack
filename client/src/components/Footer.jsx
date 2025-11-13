@@ -36,17 +36,17 @@ export default function Footer() {
                     initial={{ y: 20, opacity: 0 }}
                     whileInView={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.4 }}
-                    className="flex flex-wrap justify-between w-1/2 gap-8">
+                    className="flex flex-wrap justify-around w-1/2 gap-8">
                     <div>
                         <h2 className='text-base font-medium uppercase text-gray-800'>Quick Links</h2>
                         <ul className='mt-3 flex flex-col gap-1.5'>
                             <li><a href="#">Home</a></li>
-                            <li><a href="#">Browse Cars</a></li>
-                            <li><a href="#">List Your Car</a></li>
-                            <li><a href="#">About</a></li>
+                            <li><a href="/cars">Browse Cars</a></li>
+                            <li><a href="/my-bookings">Bookings</a></li>
+                            <li><a href="#about">About</a></li>
                         </ul>
                     </div>
-                    <div>
+                    {/* <div>
                         <h2 className='text-base font-medium uppercase text-gray-800'>Resources</h2>
                         <ul className='mt-3 flex flex-col gap-1.5'>
                             <li><a href="#">Help Center</a></li>
@@ -54,12 +54,12 @@ export default function Footer() {
                             <li><a href="#">Privacy Policy</a></li>
                             <li><a href="#">Insurance</a></li>
                         </ul>
-                    </div>
+                    </div> */}
                     <div>
                         <h2 className='text-base font-medium uppercase text-gray-800'>Contact</h2>
                         <ul className='mt-3 flex flex-col gap-1.5'>
                             <li><a href="#">1234 luxury drive </a></li>
-                            <li><a href="#">los wegas ca 23982</a></li>
+                            <li><a href="#">Mansrovar, Jaipur 23982</a></li>
                             <li><a href="#">+1 2389283892</a></li>
                             <li><a href="#">info11@gmail.com</a></li>
                         </ul>

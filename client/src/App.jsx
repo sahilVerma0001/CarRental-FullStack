@@ -13,39 +13,44 @@ import AddCar from './pages/owner/AddCar';
 import ManageCars from './pages/owner/ManageCars';
 import ManageBookings from './pages/owner/ManageBookings';
 import Login from './components/Login';
-import {Toaster} from 'react-hot-toast'
+import { Toaster } from 'react-hot-toast'
 import { useAppContext } from './context/AppContext';
+import ResetPassword from './pages/ResetPassword';
+import VerifyOtp from './pages/VerifyOtp';
 
 function App() {
-  const {showLogin} = useAppContext()
+  const { showLogin } = useAppContext()
   const isOwnerPath = useLocation().pathname.startsWith('/owner');
 
   return (
     <>
-      <Toaster/>
-      {showLogin && <Login/>}
-      { !isOwnerPath && <Navbar/>}
-
+      <Toaster />
+      {showLogin && <Login />}
+      {!isOwnerPath && <Navbar />}
 
       <Routes>
-        
-        <Route path='/' element={<Home/>} />
-        <Route path='/car-details/:id' element={<CarDetails/>} />
-        <Route path='/cars' element={<Cars/>} />
-        <Route path='/my-bookings' element={<MyBookings/>} />
 
-        <Route path='/owner' element={<Layout/>}>
-            <Route index element={<DashBoard/>} />
-            <Route path='add-car' element={<AddCar/>} />
-            <Route path='manage-cars' element={<ManageCars/>} />
-            <Route path='manage-bookings' element={<ManageBookings/>} />
+        <Route path='/' element={<Home />} />
+        <Route path='/car-details/:id' element={<CarDetails />} />
+        <Route path='/cars' element={<Cars />} />
+        <Route path='/my-bookings' element={<MyBookings />} />
 
+        <Route path='/owner' element={<Layout />}>
+          <Route index element={<DashBoard />} />
+          <Route path='add-car' element={<AddCar />} />
+          <Route path='manage-cars' element={<ManageCars />} />
+          <Route path='manage-bookings' element={<ManageBookings />} />
+          <Route path='edit-car/:id' element={<AddCar />} />
         </Route>
+
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/verify-otp" element={<VerifyOtp />} />
+
 
       </Routes>
 
       {!isOwnerPath && <Footer />}
-      
+
 
     </>
   )
